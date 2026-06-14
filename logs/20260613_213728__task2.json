@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-06-13T21:37:28.658131",
+  "task": {
+    "id": "task2",
+    "prompt": "Generate CARLA ACC code",
+    "prompt_length": 23,
+    "prompt_words": 4
+  },
+  "execution": {
+    "mode": "local",
+    "timeout": 180,
+    "caveman_enabled": false,
+    "caveman_level": null
+  },
+  "ai_usage": {
+    "model": "mistral",
+    "hybrid_complexity": null,
+    "hybrid_routing": null,
+    "tokens_used": 598,
+    "time_seconds": 32.63,
+    "cost_usd": 0
+  },
+  "status": "success",
+  "error": null
+}

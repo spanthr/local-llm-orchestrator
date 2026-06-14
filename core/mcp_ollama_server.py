@@ -15,7 +15,7 @@ class OllamaMCPServer:
     def run_task(self, task_id: str, prompt: str, model: str = "mistral") -> dict:
         """Run task on local Ollama - called by Claude Code"""
 
-        print(f"\n[MCP] Claude Code → Local Ollama")
+        print(f"\n[MCP] Claude Code -> Local Ollama")
         print(f"  Task: {task_id}")
         print(f"  Model: {model}")
         print(f"  Running locally...")
