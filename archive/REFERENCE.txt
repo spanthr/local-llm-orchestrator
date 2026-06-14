@@ -1,0 +1,247 @@
+================================================================================
+OLLAMA LOCAL LLM - COMPLETE COMMAND REFERENCE
+================================================================================
+
+================================================================================
+BATCH SCRIPT COMMANDS (Windows - Easiest)
+================================================================================
+
+Syntax: run_task.bat <command> [options]
+
+TASK COMMANDS:
+  run_task.bat task1 "Your prompt"     Run Holiday Planner task
+  run_task.bat task2 "Your prompt"     Run ROS2/CARLA Development task
+  run_task.bat task3 "Your prompt"     Run Media Editing task
+
+MANAGEMENT COMMANDS:
+  run_task.bat list                    List all installed models
+  run_task.bat verify                  Check setup and privacy settings
+
+EXAMPLES:
+  run_task.bat task1 "Plan a trip to Tokyo"
+  run_task.bat task2 "Generate PID controller code"
+  run_task.bat task3 "Color grading tips for portraits"
+
+================================================================================
+PYTHON CLI COMMANDS (Direct)
+================================================================================
+
+Syntax: python cli.py [command] [options]
+
+TASK COMMANDS:
+  python cli.py --task task1 --prompt "Your prompt"
+  python cli.py --task task2 --prompt "Your prompt"
+  python cli.py --task task3 --prompt "Your prompt"
+
+MANAGEMENT COMMANDS:
+  python cli.py --verify               Check setup and privacy
+  python cli.py --list-models          Show installed models
+  python cli.py                        Show help
+
+EXAMPLES:
+  python cli.py --task task1 --prompt "Beach vacation ideas"
+  python cli.py --task task2 --prompt "Implement sensor fusion"
+  python cli.py --task task3 --prompt "Lighting setup for video"
+
+================================================================================
+OLLAMA COMMANDS (Advanced)
+================================================================================
+
+These work directly with Ollama:
+
+MODEL MANAGEMENT:
+  ollama list                          List all installed models
+  ollama pull mistral                  Download mistral model
+  ollama pull neural-chat              Download neural-chat model
+  ollama pull llama2                   Download llama2 model
+  ollama remove mistral                Delete mistral model
+  ollama show mistral                  Show model info
+
+RUNNING MODELS:
+  ollama run mistral "Your prompt"     Run mistral directly
+  ollama run neural-chat "Your prompt" Run neural-chat directly
+  ollama serve                         Start Ollama server (usually auto)
+
+CHECKING STATUS:
+  ollama --version                     Show Ollama version
+  ollama list                          Show all models + size
+
+================================================================================
+AVAILABLE MODELS
+================================================================================
+
+INSTALLED (by default):
+  mistral      4.1 GB  - Best quality, good for detailed tasks
+  neural-chat  4.7 GB  - Good for instructions and conversation
+  phi          2.6 GB  - Fast, lightweight, less detailed
+
+AVAILABLE TO DOWNLOAD:
+  llama2       3.8 GB  - Strong general purpose
+  codellama    3.8 GB  - Specialized for code
+  orca-mini    1.3 GB  - Small, fast, basic tasks
+  stablelm     3.9 GB  - Stable, reliable
+
+Download with: ollama pull <model-name>
+
+================================================================================
+ENVIRONMENT VARIABLES
+================================================================================
+
+Set these for customization:
+
+OLLAMA_MODELS
+  Path to models directory
+  Default: E:\llm_workspace\ollama_models
+  Set with: setx OLLAMA_MODELS "E:\llm_workspace\ollama_models"
+
+OLLAMA_TELEMETRY
+  Enable/disable usage tracking
+  Value: false (for privacy)
+  Set with: setx OLLAMA_TELEMETRY false
+
+OLLAMA_HOST
+  Server address
+  Default: localhost:11434 (local only)
+  Can't change without breaking local-only guarantee
+
+================================================================================
+PRIVACY SETTINGS
+================================================================================
+
+Verify Privacy:
+  run_task.bat verify
+
+This checks:
+  ✓ OLLAMA_TELEMETRY = false
+  ✓ All data on E: drive
+  ✓ No system internet access
+  ✓ No external API keys
+  ✓ Offline operation
+
+Current Settings:
+  • No telemetry/tracking
+  • No data sharing
+  • No internet connectivity required
+  • No API keys or credentials
+  • All models downloaded locally
+  • All processing offline
+
+================================================================================
+DISK SPACE MANAGEMENT
+================================================================================
+
+CHECK SPACE:
+  List models and size: ollama list
+  Models directory: E:\llm_workspace\ollama_models\
+  Check free space: Run cmd, then: dir E:\
+
+TYPICAL SIZES:
+  mistral:      4.1 GB
+  neural-chat:  4.7 GB
+  phi:          2.6 GB
+  Total:        ~13 GB
+
+REMOVE UNUSED:
+  ollama remove neural-chat   (Frees 4.7 GB)
+  ollama remove phi            (Frees 2.6 GB)
+
+================================================================================
+TROUBLESHOOTING COMMANDS
+================================================================================
+
+PROBLEM: "Model not found"
+SOLUTION: Download it
+  ollama pull mistral
+
+PROBLEM: "Out of disk space"
+SOLUTION: Remove unused models
+  ollama remove phi
+  Check space: dir E:\
+
+PROBLEM: "Response is slow"
+SOLUTION: Use faster model
+  run_task.bat task1 "prompt"  (tries mistral first)
+  Edit cli.py to use phi instead
+
+PROBLEM: "Ollama not running"
+SOLUTION: Restart Ollama
+  On Windows, usually auto-starts
+  Manually: ollama serve
+
+PROBLEM: "Permission denied on setup_env.bat"
+SOLUTION: Run as Administrator
+  Right-click Command Prompt → "Run as administrator"
+  Then: setup_env.bat
+
+PROBLEM: "Command not found"
+SOLUTION: Check PATH or use full path
+  Full path: "E:\llm_workspace\run_task.bat" task1 "prompt"
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+E:\llm_workspace\
+├── ollama_models/              (Downloaded models - do not edit)
+│   ├── mistral/
+│   ├── neural-chat/
+│   └── phi/
+├── config/                     (Configuration files)
+├── datasets/                   (Optional: store data here)
+├── cli.py                      (Python CLI - main tool)
+├── run_task.bat                (Windows batch - easier interface)
+├── setup_env.bat               (Environment setup - run once)
+├── README.txt                  (Quick start guide)
+├── EXAMPLES.txt                (Example prompts and usage)
+├── REFERENCE.txt               (This file)
+└── PRIVACY_AUDIT.txt           (Privacy verification)
+
+================================================================================
+QUICK COMMAND CHEAT SHEET
+================================================================================
+
+Get Started:
+  setup_env.bat                          (Run once after install)
+  run_task.bat verify                    (Check everything works)
+
+Holiday Planner:
+  run_task.bat task1 "Plan a trip to Paris"
+
+CARLA Autonomous Driving:
+  run_task.bat task2 "Write ACC code"
+
+Media Editing:
+  run_task.bat task3 "Color grading guide"
+
+Management:
+  run_task.bat list                      (Show models)
+  ollama pull llama2                     (Add more models)
+  ollama remove phi                      (Delete model)
+
+Privacy Check:
+  run_task.bat verify                    (Verify setup)
+
+================================================================================
+ADVANCED: EDITING TASKS
+================================================================================
+
+Add custom task:
+1. Open E:\llm_workspace\cli.py in text editor
+2. Find TASKS = { ... }
+3. Add:
+   "task4": {"name": "My Task", "model": "mistral"}
+4. Save
+5. Use: run_task.bat task4 "Your prompt"
+
+Change model for task:
+1. Edit TASKS in cli.py
+2. Change model from "mistral" to "neural-chat" or "phi"
+3. Save
+4. Rerun task
+
+Add more models:
+1. ollama pull llama2
+2. Edit cli.py to use it
+3. Save and run
+
+================================================================================

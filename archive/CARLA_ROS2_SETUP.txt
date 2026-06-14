@@ -1,0 +1,395 @@
+================================================================================
+CARLA & ROS2 INTEGRATION GUIDE FOR WINDOWS
+================================================================================
+
+This guide helps you install CARLA and ROS2 on Windows and connect them
+for autonomous driving development.
+
+================================================================================
+WHAT IS CARLA?
+================================================================================
+
+CARLA (Car Learning to Act) is a simulator for autonomous driving research.
+
+Key Features:
+  • Realistic traffic and weather simulation
+  • Python API for autonomous vehicle development
+  • Sensor simulation (camera, lidar, radar)
+  • Multi-vehicle scenarios
+  • Free and open-source
+
+Download: https://carla.readthedocs.io/en/latest/start_quickstart/
+
+================================================================================
+WHAT IS ROS2?
+================================================================================
+
+ROS2 (Robot Operating System 2) is middleware for robotics.
+
+Key Features:
+  • Distributed communication between processes
+  • Topic-based pub/sub messaging
+  • Service calls for synchronous requests
+  • Real-time performance
+  • Used extensively in autonomous vehicles
+
+Download: https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html
+
+================================================================================
+SYSTEM REQUIREMENTS
+================================================================================
+
+Minimum:
+  • Windows 10/11 (64-bit)
+  • 8GB RAM (16GB recommended)
+  • RTX 2060 or better GPU
+  • 50GB free disk space
+  • Python 3.8+
+  • Visual C++ Build Tools
+
+Your System:
+  ✓ Windows 11 Home
+  ✓ RTX 2060 (6GB VRAM)
+  ✓ 14GB RAM
+  ✓ Python 3.12 installed
+  ✓ Good to go!
+
+================================================================================
+STEP 1: INSTALL ROS2 (First)
+================================================================================
+
+ROS2 should be installed BEFORE CARLA for easier integration.
+
+1. Download ROS2 Humble (Latest LTS):
+   https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html
+
+2. Choose: ROS 2 Humble - Windows (binary)
+
+3. Run the installer (.exe)
+
+4. Follow installation wizard:
+   - Accept default paths (usually: C:\opt\ros\humble)
+   - Install Visual C++ dependencies if prompted
+   - Complete installation
+
+5. Verify installation:
+   Open Command Prompt and run:
+
+   echo %ROS_DISTRO%
+   (Should print: humble)
+
+6. Add to environment (if needed):
+   Open Command Prompt as Administrator:
+
+   setx ROS_DISTRO humble
+   setx ROS_DOMAIN_ID 0
+
+7. Restart Command Prompt
+
+Learn more: https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html
+
+================================================================================
+STEP 2: INSTALL CARLA
+================================================================================
+
+1. Download CARLA:
+   https://carla.readthedocs.io/en/latest/start_quickstart/
+
+2. Choose: CARLA 0.9.14 (Latest) for Windows
+
+3. Extract the ZIP file:
+   Recommended: C:\CARLA\carla-0.9.14
+   (Don't use paths with spaces)
+
+4. Install CARLA Python API:
+   Open Command Prompt:
+
+   cd C:\CARLA\carla-0.9.14
+   pip install -e PythonAPI
+
+5. Verify installation:
+   python -c "import carla; print(carla.__version__)"
+   (Should print version number)
+
+Learn more: https://carla.readthedocs.io/en/latest/start_quickstart/
+
+================================================================================
+STEP 3: START CARLA SERVER
+================================================================================
+
+CARLA runs as a server that you connect to via Python or ROS2.
+
+1. Open Command Prompt
+
+2. Navigate to CARLA:
+   cd C:\CARLA\carla-0.9.14
+
+3. Start the server:
+   .\CarlaUE4.exe -carla-server
+
+   Or with settings:
+   .\CarlaUE4.exe -carla-server -quality-level=High -windowed
+
+4. Wait for "Server is ready!" message
+
+5. LEAVE THIS RUNNING - open new Command Prompt for next steps
+
+Performance Tips:
+  • Use -quality-level=Low for better performance
+  • Use -windowed for windowed mode
+  • Use -fps=30 to limit frame rate
+  • Use -no-rendering for faster headless operation
+
+================================================================================
+STEP 4: CREATE ROS2 WORKSPACE
+================================================================================
+
+ROS2 workspace is where you write and organize your code.
+
+1. Create workspace directory:
+   mkdir C:\carla_ros2_ws
+   mkdir C:\carla_ros2_ws\src
+
+2. Create a ROS2 package:
+   cd C:\carla_ros2_ws\src
+   ros2 pkg create carla_interface --build-type ament_python
+
+3. This creates:
+   C:\carla_ros2_ws\src\carla_interface\
+   ├── carla_interface/
+   ├── setup.py
+   ├── setup.cfg
+   └── package.xml
+
+4. Build workspace:
+   cd C:\carla_ros2_ws
+   colcon build
+
+================================================================================
+STEP 5: CREATE ROS2 NODE TO CONNECT CARLA
+================================================================================
+
+Use task2 to generate this code:
+
+run_task.bat task2 "Create a ROS2 node that connects to CARLA simulator in Python"
+
+Or create manually:
+
+File: C:\carla_ros2_ws\src\carla_interface\carla_interface\carla_client.py
+
+```python
+import rclpy
+from rclpy.node import Node
+import carla
+import numpy as np
+from std_msgs.msg import String
+
+class CarlaClientNode(Node):
+    def __init__(self):
+        super().__init__('carla_client')
+
+        # Connect to CARLA server
+        self.client = carla.Client('localhost', 2000)
+        self.client.set_timeout(10.0)
+        self.world = self.client.get_world()
+
+        # Create publishers
+        self.actor_pub = self.create_publisher(String, 'carla/actors', 10)
+
+        self.get_logger().info('Connected to CARLA!')
+
+        # Timer to publish data
+        timer_period = 0.1  # 10 Hz
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+
+    def timer_callback(self):
+        # Get actor list from CARLA
+        actors = self.world.get_actors()
+        msg = String()
+        msg.data = f'Actors in world: {len(actors)}'
+        self.actor_pub.publish(msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CarlaClientNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+================================================================================
+STEP 6: RUN YOUR ROS2 NODE
+================================================================================
+
+1. Make sure CARLA server is running (from Step 3)
+
+2. Open new Command Prompt
+
+3. Build your workspace:
+   cd C:\carla_ros2_ws
+   colcon build
+
+4. Source the workspace:
+   call install\setup.bat
+
+5. Run your ROS2 node:
+   ros2 run carla_interface carla_client
+
+6. You should see:
+   "Connected to CARLA!"
+   "Actors in world: X"
+
+================================================================================
+STEP 7: ADD SENSORS (Camera, Lidar)
+================================================================================
+
+Use task2 to generate sensor code:
+
+run_task.bat task2 "Create ROS2 node with CARLA camera and lidar sensors publishing to ROS2 topics"
+
+Example sensors in CARLA:
+  • RGB Camera
+  • Depth Camera
+  • Lidar
+  • Radar
+  • IMU
+
+================================================================================
+STEP 8: IMPLEMENT AUTONOMOUS DRIVING
+================================================================================
+
+Use task2 to generate specific code:
+
+run_task.bat task2 "Implement Adaptive Cruise Control (ACC) in ROS2 that reads CARLA sensor data"
+
+run_task.bat task2 "Create lane detection algorithm using CARLA camera data"
+
+run_task.bat task2 "Implement path planning for autonomous parking in CARLA"
+
+================================================================================
+QUICK COMMAND REFERENCE
+================================================================================
+
+Start CARLA Server:
+  cd C:\CARLA\carla-0.9.14
+  .\CarlaUE4.exe -carla-server
+
+Create ROS2 Package:
+  ros2 pkg create my_package --build-type ament_python
+
+Build Workspace:
+  cd C:\carla_ros2_ws
+  colcon build
+
+Source Workspace:
+  call install\setup.bat
+
+Run Node:
+  ros2 run package_name node_name
+
+List Nodes:
+  ros2 node list
+
+List Topics:
+  ros2 topic list
+
+Subscribe to Topic:
+  ros2 topic echo /topic_name
+
+View Node Graph:
+  rqt_graph
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+CARLA Server Won't Start:
+  1. Make sure no other CARLA instance is running
+  2. Check Windows Defender hasn't blocked it
+  3. Try: taskkill /IM CarlaUE4.exe /F
+  4. Restart
+
+ROS2 Node Can't Connect to CARLA:
+  1. Verify CARLA server is running
+  2. Check: localhost:2000 is accessible
+  3. Try: ping localhost
+  4. Verify Python carla package installed: pip list | grep carla
+
+"Connection Refused" Error:
+  1. CARLA server not running - start it first
+  2. Check firewall allows localhost:2000
+  3. Restart CARLA server
+
+ROS2 Command Not Found:
+  1. Make sure ROS2 is installed
+  2. Source the setup: call C:\opt\ros\humble\setup.bat
+  3. Verify: echo %ROS_DISTRO% (should print: humble)
+
+Out of Memory:
+  1. Close other applications
+  2. Lower CARLA quality: -quality-level=Low
+  3. Reduce sensor frequency in ROS2 code
+  4. Use -no-rendering mode
+
+================================================================================
+USEFUL LINKS
+================================================================================
+
+CARLA Documentation:
+  https://carla.readthedocs.io/
+
+ROS2 Documentation:
+  https://docs.ros.org/
+
+CARLA Python API:
+  https://carla.readthedocs.io/en/latest/python_api/
+
+ROS2 Tutorials:
+  https://docs.ros.org/en/humble/Tutorials.html
+
+CARLA ROS Bridge (Integration):
+  https://github.com/carla-simulator/ros-bridge
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Install ROS2 Humble
+   https://docs.ros.org/en/humble/Installation/Windows-Install-Binary.html
+
+2. Install CARLA 0.9.14
+   https://carla.readthedocs.io/en/latest/start_quickstart/
+
+3. Start CARLA server:
+   cd C:\CARLA\carla-0.9.14
+   .\CarlaUE4.exe -carla-server
+
+4. Generate ROS2 code:
+   run_task.bat task2 "Your prompt"
+
+5. Create ROS2 workspace and nodes
+
+6. Test connection and publish sensor data
+
+================================================================================
+HELP WITH CODE GENERATION
+================================================================================
+
+Use task2 for code generation:
+
+run_task.bat task2 "Generate ROS2 Python code for..."
+
+Examples:
+  - "Generate ROS2 node that publishes CARLA actor positions"
+  - "Write code for camera sensor publishing to ROS2 topic"
+  - "Implement vehicle control via ROS2 service calls"
+  - "Create perception pipeline for object detection"
+  - "Write path planning algorithm for autonomous navigation"
+  - "Implement sensor fusion for localization"
+
+The AI will generate complete, working Python code.
+
+================================================================================

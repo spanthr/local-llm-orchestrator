@@ -1,0 +1,13 @@
+# Local LLM System Requirements
+
+# Anthropic Claude API
+anthropic>=0.25.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+pydantic>=2.5.0
+
+# Optional: For advanced features
+# torch>=2.0.0  # For fine-tuning
+# huggingface-hub>=0.16.0  # For model management

@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{print $9, \"\\(\" $5 \"\\)\"}')",
+      "Bash(mv CARLA_ROS2_SETUP.txt archive/)",
+      "Bash(mv CARLA_SETUP.txt archive/)",
+      "Bash(mv README.txt archive/)",
+      "Bash(mv EXAMPLES.txt archive/)",
+      "Bash(mv REFERENCE.txt archive/)",
+      "Bash(awk '{print $9}')",
+      "Bash(grep -v \"^$\")",
+      "Bash(rm claude.cmd)",
+      "Bash(rm setup_automation.py)",
+      "Bash(rmdir \"E:llm_workspacearchive\")",
+      "Bash(rm -f core/claude_client.py)",
+      "Bash(rm -f modes/claude_mode.py)",
+      "Bash(rm -f modes/semi_hybrid_mode.py)",
+      "Bash(rm -f modes/hybrid_mode.py)",
+      "Bash(rm -f core/mcp_claude_server.py)",
+      "Bash(rm README.md)",
+      "Bash(cat)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Initial commit: Local LLM Orchestrator - Claude Code + Ollama *)"
+    ]
+  }
+}

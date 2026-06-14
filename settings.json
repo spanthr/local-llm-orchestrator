@@ -1,0 +1,8 @@
+{
+  "mode": "local",
+  "local_model": "mistral",
+  "enable_caveman": true,
+  "caveman_level": "full",
+  "timeout": 180,
+  "verbose": false
+}

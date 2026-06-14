@@ -1,0 +1,412 @@
+================================================================================
+CARLA AUTONOMOUS DRIVING SIMULATOR - WINDOWS SETUP GUIDE
+================================================================================
+
+CARLA (Car Learning to Act) is a simulator for autonomous driving research.
+Use Python API to develop and test autonomous vehicle algorithms.
+
+================================================================================
+WHAT IS CARLA?
+================================================================================
+
+Key Features:
+  • Realistic traffic and weather simulation
+  • Python API for autonomous vehicle development
+  • Sensor simulation (camera, lidar, radar, IMU)
+  • Multi-vehicle scenarios and scenarios
+  • Free and open-source
+  • Perfect for testing autonomous driving algorithms
+
+Download: https://carla.readthedocs.io/en/latest/start_quickstart/
+
+================================================================================
+SYSTEM REQUIREMENTS
+================================================================================
+
+Minimum:
+  • Windows 10/11 (64-bit)
+  • 8GB RAM (16GB recommended)
+  • RTX 2060 or better GPU
+  • 50GB free disk space
+  • Python 3.8+
+
+Your System:
+  ✓ Windows 11 Home
+  ✓ RTX 2060 (6GB VRAM)
+  ✓ 14GB RAM
+  ✓ Python 3.12 installed
+  ✓ Perfect for CARLA!
+
+================================================================================
+STEP 1: DOWNLOAD CARLA
+================================================================================
+
+1. Go to: https://carla.readthedocs.io/en/latest/start_quickstart/
+
+2. Download: CARLA 0.9.15 (Latest) for Windows
+
+3. Choose: CARLA_0.9.15.zip or CARLA_0.9.15_ACC.zip
+
+4. Extract to: C:\CARLA\carla-0.9.15
+   (Don't use paths with spaces)
+
+File size: ~50GB (download takes 15-30 minutes)
+
+================================================================================
+STEP 2: INSTALL CARLA PYTHON API
+================================================================================
+
+1. Open Command Prompt
+
+2. Navigate to CARLA:
+   cd C:\CARLA\carla-0.9.15
+
+3. Install Python API:
+   pip install -e PythonAPI
+
+4. Verify installation:
+   python -c "import carla; print(carla.__version__)"
+
+   Should print: 0.9.15
+
+================================================================================
+STEP 3: START CARLA SERVER
+================================================================================
+
+CARLA runs as a server that you control via Python scripts.
+
+1. Open Command Prompt
+
+2. Navigate to CARLA:
+   cd C:\CARLA\carla-0.9.15
+
+3. Start the server:
+   .\CarlaUE4.exe -carla-server
+
+   Or with custom settings:
+   .\CarlaUE4.exe -carla-server -quality-level=High -windowed
+
+4. Wait for message: "Server is ready!"
+
+5. KEEP THIS WINDOW OPEN - open new Command Prompt for scripts
+
+Performance Tips:
+  • Default: Full quality, full speed
+  • Fast mode: -quality-level=Low -fps=30
+  • Headless (no graphics): -no-rendering -fps=30
+  • Windowed: -windowed
+  • Custom resolution: -ResX=800 -ResY=600
+
+================================================================================
+STEP 4: CREATE YOUR FIRST SCRIPT
+================================================================================
+
+Create file: C:\CARLA\my_script.py
+
+```python
+import carla
+import time
+
+# Connect to CARLA server
+client = carla.Client('localhost', 2000)
+client.set_timeout(10.0)
+world = client.get_world()
+
+print(f"CARLA version: {client.get_server_version()}")
+print(f"Actors in world: {len(world.get_actors())}")
+
+# Get map
+map_name = world.get_map().name
+print(f"Current map: {map_name}")
+
+# Get weather
+weather = world.get_weather()
+print(f"Weather: {weather}")
+```
+
+Run it:
+  cd C:\CARLA
+  python my_script.py
+
+Output:
+  CARLA version: 0.9.15
+  Actors in world: 0
+  Current map: Town01
+  Weather: (weather params)
+
+================================================================================
+STEP 5: SPAWN A VEHICLE
+================================================================================
+
+Create file: C:\CARLA\spawn_vehicle.py
+
+```python
+import carla
+
+client = carla.Client('localhost', 2000)
+client.set_timeout(10.0)
+world = client.get_world()
+
+# Get spawn points
+spawn_points = world.get_map().get_spawn_points()
+print(f"Available spawn points: {len(spawn_points)}")
+
+# Get vehicle blueprint
+blueprint_library = world.get_blueprint_library()
+vehicle_bp = blueprint_library.filter('vehicle.tesla.model3')[0]
+
+# Spawn vehicle at first spawn point
+vehicle = world.spawn_actor(vehicle_bp, spawn_points[0])
+
+print(f"Spawned: {vehicle.type_id} at {spawn_points[0].location}")
+
+# Keep it alive
+import time
+time.sleep(10)
+
+# Destroy
+vehicle.destroy()
+print("Vehicle destroyed")
+```
+
+Run it:
+  python spawn_vehicle.py
+
+You'll see a Tesla Model 3 appear in CARLA for 10 seconds.
+
+================================================================================
+STEP 6: ADD SENSORS
+================================================================================
+
+Use task2 to generate sensor code:
+
+run_task.bat task2 "Generate CARLA Python code that spawns a vehicle with RGB camera and lidar sensors"
+
+Available Sensors:
+  • RGB Camera (color images)
+  • Depth Camera (distance data)
+  • Semantic Segmentation (object classification)
+  • Lidar (point cloud)
+  • Radar (object detection)
+  • IMU (acceleration, angular velocity)
+  • GNSS (GPS location)
+
+================================================================================
+STEP 7: AUTONOMOUS DRIVING ALGORITHMS
+================================================================================
+
+Use task2 to generate specific algorithms:
+
+Adaptive Cruise Control (ACC):
+  run_task.bat task2 "Generate CARLA Python code for Adaptive Cruise Control that maintains distance from lead vehicle"
+
+Lane Keeping Assist:
+  run_task.bat task2 "Create lane detection and lane keeping algorithm for CARLA using camera sensor"
+
+Path Planning:
+  run_task.bat task2 "Implement A* path planning algorithm for autonomous parking in CARLA"
+
+Object Detection:
+  run_task.bat task2 "Create object detection pipeline using CARLA camera and segmentation data"
+
+Traffic Light Detection:
+  run_task.bat task2 "Implement traffic light detection from camera images in CARLA"
+
+================================================================================
+STEP 8: TRAFFIC & SCENARIOS
+================================================================================
+
+Add traffic:
+
+```python
+import carla
+
+client = carla.Client('localhost', 2000)
+world = client.get_world()
+
+# Enable autopilot for all vehicles
+for actor in world.get_actors():
+    if 'vehicle' in actor.type_id:
+        actor.set_autopilot(True)
+```
+
+Create scenarios:
+
+```python
+import carla
+import random
+
+client = carla.Client('localhost', 2000)
+world = client.get_world()
+
+# Spawn 5 vehicles with autopilot
+blueprint_library = world.get_blueprint_library()
+spawn_points = world.get_map().get_spawn_points()
+
+for i in range(5):
+    vehicle_bp = random.choice(blueprint_library.filter('vehicle'))
+    vehicle = world.spawn_actor(vehicle_bp, spawn_points[i])
+    vehicle.set_autopilot(True)
+    print(f"Spawned vehicle {i+1}")
+```
+
+================================================================================
+QUICK COMMAND REFERENCE
+================================================================================
+
+Start CARLA Server:
+  cd C:\CARLA\carla-0.9.15
+  .\CarlaUE4.exe -carla-server
+
+Connect in Python:
+  client = carla.Client('localhost', 2000)
+  world = client.get_world()
+
+Get all vehicles:
+  world.get_actors().filter('vehicle')
+
+Get all pedestrians:
+  world.get_actors().filter('walker')
+
+Get weather:
+  world.get_weather()
+
+Set weather:
+  weather = world.get_weather()
+  weather.cloudiness = 80.0
+  world.set_weather(weather)
+
+Change map:
+  world = client.load_world('Town02')
+
+Spawn actor:
+  vehicle = world.spawn_actor(blueprint, transform)
+
+Destroy actor:
+  vehicle.destroy()
+
+Get sensor data:
+  data = queue.get(timeout=1)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+CARLA Server Won't Start:
+  1. Check if another CARLA instance is running
+  2. Try: taskkill /IM CarlaUE4.exe /F
+  3. Ensure 50GB free space
+  4. Disable V-Sync in CARLA settings
+  5. Lower graphics quality
+
+"Connection Refused" (localhost:2000):
+  1. Make sure server is running
+  2. Check: localhost:2000 is accessible
+  3. Verify firewall allows it
+  4. Restart CARLA server
+
+"CARLA module not found":
+  1. Verify installed: pip list | grep carla
+  2. Reinstall: pip install carla
+  3. Check Python version: python --version (3.8+)
+
+Out of Memory:
+  1. Close other applications
+  2. Lower quality: -quality-level=Low
+  3. Reduce frame rate: -fps=10
+  4. Use headless mode: -no-rendering
+
+"Module carla not found" in script:
+  1. Make sure you're in C:\CARLA directory
+  2. Or install globally: pip install carla==0.9.15
+
+Performance Issues:
+  1. Use -quality-level=Low
+  2. Use -fps=30 to limit frame rate
+  3. Reduce number of sensors
+  4. Close other heavy applications
+  5. Use headless mode for faster execution
+
+================================================================================
+USEFUL LINKS
+================================================================================
+
+Official Documentation:
+  https://carla.readthedocs.io/
+
+Python API Reference:
+  https://carla.readthedocs.io/en/latest/python_api/
+
+Quick Start:
+  https://carla.readthedocs.io/en/latest/start_quickstart/
+
+Examples:
+  https://github.com/carla-simulator/carla/tree/master/PythonAPI/examples
+
+GitHub Repository:
+  https://github.com/carla-simulator/carla
+
+Community Forum:
+  https://github.com/carla-simulator/carla/discussions
+
+================================================================================
+EXAMPLE: COMPLETE AUTONOMOUS DRIVING SCRIPT
+================================================================================
+
+Use task2 to generate:
+
+run_task.bat task2 "Generate complete CARLA Python script that spawns a vehicle with camera and lidar, implements simple lane following, and logs sensor data"
+
+This should generate a full script with:
+  1. Vehicle spawning
+  2. Sensor attachment
+  3. Data collection
+  4. Control loop
+  5. Lane detection / following
+  6. Data logging
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Download CARLA:
+   https://carla.readthedocs.io/en/latest/start_quickstart/
+
+2. Extract to: C:\CARLA\carla-0.9.15
+
+3. Install Python API:
+   pip install -e C:\CARLA\carla-0.9.15\PythonAPI
+
+4. Start server:
+   cd C:\CARLA\carla-0.9.15
+   .\CarlaUE4.exe -carla-server
+
+5. Test connection:
+   python my_script.py (spawn_vehicle.py example)
+
+6. Generate algorithms:
+   run_task.bat task2 "Your prompt"
+
+7. Develop your autonomous driving system!
+
+================================================================================
+USE TASK2 FOR CODE GENERATION
+================================================================================
+
+For any autonomous driving task, use:
+
+run_task.bat task2 "Your CARLA/autonomous driving prompt"
+
+Examples:
+  - "Generate CARLA code for vehicle following with PID controller"
+  - "Create object detection and collision avoidance system"
+  - "Implement motion planning using artificial potential fields"
+  - "Write sensor fusion code combining camera and lidar"
+  - "Generate traffic sign detection using CNN"
+  - "Create path planning for autonomous parking"
+  - "Implement behavior planning state machine for intersections"
+  - "Generate decision making logic for lane changes"
+
+The AI generates complete, working Python code for CARLA.
+
+================================================================================

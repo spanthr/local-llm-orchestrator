@@ -1,0 +1,128 @@
+================================================================================
+OLLAMA LOCAL LLM - REAL USAGE EXAMPLES
+================================================================================
+
+All commands use: run_task.bat <task> "<prompt>"
+Or with Python: python cli.py --task <task> --prompt "<prompt>"
+
+================================================================================
+TASK 1: HOLIDAY PLANNER
+================================================================================
+
+Example 1:
+  run_task.bat task1 "Plan a 5-day trip to Paris. Budget: $3000. What are the top 10 attractions?"
+
+  Expected: Hotel suggestions, daily itinerary, budget breakdown, restaurant recommendations
+
+Example 2:
+  run_task.bat task1 "Create a beach vacation checklist for Bali. What should I pack? Where to stay?"
+
+  Expected: Packing list, best beaches, accommodation options, local tips
+
+Example 3:
+  run_task.bat task1 "Plan a winter ski trip to Switzerland. Difficulty level: intermediate. Best resorts?"
+
+  Expected: Ski resorts ranked, accommodation, costs, gear recommendations, travel tips
+
+Example 4:
+  run_task.bat task1 "Weekend trip ideas in California. I like hiking and food. Suggest 3 options."
+
+  Expected: 3 destinations with hiking trails, local restaurants, distance from major cities
+
+================================================================================
+TASK 2: CARLA AUTONOMOUS DRIVING
+================================================================================
+
+Example 1:
+  run_task.bat task2 "Write Python code for Adaptive Cruise Control (ACC) in CARLA. Include sensor fusion and safety margins."
+
+  Expected: Well-commented Python code, sensor integration, vehicle control
+
+Example 2:
+  run_task.bat task2 "Create a path planning algorithm for autonomous parking in CARLA. Use A* search."
+
+  Expected: Complete algorithm, pseudocode, complexity analysis, CARLA integration
+
+Example 3:
+  run_task.bat task2 "Generate CARLA Python script for lane detection using camera sensor. Use image processing."
+
+  Expected: Complete Python code, sensor setup, lane following control logic
+
+Example 4:
+  run_task.bat task2 "Implement traffic light detection from CARLA camera images using deep learning."
+
+  Expected: Detection model code, CARLA sensor setup, decision logic
+
+================================================================================
+TASK 3: MEDIA EDITING & PHOTOGRAPHY
+================================================================================
+
+Example 1:
+  run_task.bat task3 "Guide for color grading sunset photos. How do I enhance warm tones without losing detail?"
+
+  Expected: Step-by-step technique, tool recommendations, common mistakes, before/after description
+
+Example 2:
+  run_task.bat task3 "How to smooth skin tones in portrait retouching while keeping texture. Best practices?"
+
+  Expected: Techniques (frequency separation, dodge/burn, healing brush), settings, before/after tips
+
+Example 3:
+  run_task.bat task3 "Create a video editing workflow for vlogging. What effects work best? Frame rates? Audio levels?"
+
+  Expected: Complete workflow, tool recommendations, settings, pacing tips, audio guidelines
+
+Example 4:
+  run_task.bat task3 "Explain white balance in photography. Why does my photo look too blue? How do I fix it?"
+
+  Expected: Technical explanation, how to identify issues, correction techniques, prevention tips
+
+================================================================================
+RESPONSE TIME
+================================================================================
+
+These are LOCAL models on your machine:
+  • mistral: ~10-30 seconds for detailed responses
+  • neural-chat: ~5-15 seconds
+  • phi: ~2-5 seconds (but less detailed)
+
+First time downloading a model: 5-10 minutes depending on internet
+
+================================================================================
+CUSTOMIZATION
+================================================================================
+
+To add your own tasks:
+1. Open cli.py
+2. Add to TASKS dictionary:
+   "task4": {"name": "Your Task", "model": "mistral"}
+3. Save and use: run_task.bat task4 "Your prompt"
+
+To use different models:
+1. List available: run_task.bat list
+2. Download more: ollama pull llama2
+3. Update cli.py task config
+
+================================================================================
+PERFORMANCE TIPS
+================================================================================
+
+1. First run of a model is slower (model loading from disk)
+2. Longer prompts = longer response time
+3. GPU acceleration: Ollama auto-detects RTX 2060
+4. Increase speed: Use phi model instead of mistral
+5. Increase quality: Use mistral instead of neural-chat
+
+================================================================================
+OFFLINE USAGE
+================================================================================
+
+After initial setup:
+- Can run completely offline
+- No internet needed once models downloaded
+- No API keys required
+- No telemetry or tracking
+- All data stays on E: drive
+
+Verify: run_task.bat verify
+================================================================================
